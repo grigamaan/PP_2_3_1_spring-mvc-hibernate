@@ -18,25 +18,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 @ComponentScan(basePackages = "web")
 public class WebMvcConfig implements WebMvcConfigurer {
 
-//    @Override
-//    public void configureViewResolvers(ViewResolverRegistry registry) {
-//        registry.jsp().prefix("/WEB-INF/views/").suffix(".jsp");
-//    }
-
-//    @Override
-//    public void configureViewResolvers(ViewResolverRegistry registry) {
-//        registry.viewResolver(htmlViewResolver());
-//    }
-//
-//    @Bean
-//    public ViewResolver htmlViewResolver() {
-//        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-//        resolver.setPrefix("/WEB-INF/views/");
-//        resolver.setSuffix(".html");
-//        return resolver;
-//    }
-
-
     @Bean
     public ViewResolver viewResolver(SpringTemplateEngine templateEngine) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
