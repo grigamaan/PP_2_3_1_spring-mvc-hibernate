@@ -83,6 +83,7 @@
             <version>3.0.14.RELEASE</version>
         </dependency>
 
+
     </dependencies>
     <build>
         <finalName>SpringMVC_Hibernate_Setup</finalName>

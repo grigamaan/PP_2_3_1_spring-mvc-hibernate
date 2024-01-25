@@ -1,28 +1,20 @@
 package web.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import web.model.User;
 import web.service.UserService;
 
+
 @Controller
+@RequestMapping("/")
 public class UserController {
     private UserService userService;
 
     public UserController() {
-
     }
 
     @Autowired
@@ -30,65 +22,38 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @RequestMapping(value = { "/", "/home" }, method = RequestMethod.GET)
-    public ModelAndView hello(HttpServletResponse response) throws IOException {
-        ModelAndView mav = new ModelAndView();
-        List userList = userService.getAllUsers();
-        mav.addObject("userList", userList);
-        mav.setViewName("home");
-        return mav;
+    @GetMapping()
+    public String index(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
+        return "/index";
     }
 
-    @RequestMapping(value = "/addUser", method = RequestMethod.GET)
-    public ModelAndView displayNewUserForm() {
-        ModelAndView mav = new ModelAndView("addUser");
-        mav.addObject("headerMessage", "Add new User");
-        mav.addObject("user", new User());
-        return mav;
+    @GetMapping("/new")
+    public String newPerson(@ModelAttribute("user") User user) {
+        return "/new";
     }
 
-    @RequestMapping(value = "/addUser", method = RequestMethod.POST)
-    public ModelAndView saveNewUser(@ModelAttribute User user, BindingResult result) {
-        ModelAndView mav = new ModelAndView("redirect:/home");
-
-        boolean isAdded = userService.saveUser(user);
-        if (isAdded) {
-            mav.addObject("message", "New user added");
-        } else {
-            System.out.println("Don't save User");
-        }
-
-        return mav;
+    @PostMapping()
+    public String create(@ModelAttribute("user") User user) {
+        userService.saveUser(user);
+        return "redirect:/";
     }
 
-    @RequestMapping(value = "/editUser/{id}", method = RequestMethod.GET)
-    public ModelAndView displayEditUserForm(@PathVariable Long id) {
-        ModelAndView mav = new ModelAndView("/editUser");
-        User user = userService.getUserById(id);
-        mav.addObject("headerMessage", "Edit old User");
-        mav.addObject("user", user);
-        return mav;
+    @GetMapping("/edit/{id}")
+    public String edit(Model model, @PathVariable("id") int id) {
+        model.addAttribute("user", userService.getUserById((long) id));
+        return "/edit";
     }
 
-    @RequestMapping(value = "/editUser/{id}", method = RequestMethod.POST)
-    public ModelAndView saveEditedUser(@ModelAttribute User user, BindingResult result) {
-        ModelAndView mav = new ModelAndView("redirect:/home");
-
-        boolean isSaved = userService.saveUser(user);
-        if (!isSaved) {
-            System.out.println("Don't edit User");
-        }
-
-        return mav;
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
+        userService.saveUser(user);
+        return "redirect:/";
     }
 
-    @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.GET)
-    public ModelAndView deleteUserById(@PathVariable Long id) {
-        boolean isDeleted = userService.deleteUserById(id);
-        ModelAndView mav = new ModelAndView("redirect:/home");
-        return mav;
-
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") int id) {
+        userService.deleteUserById((long)id);
+        return "redirect:/";
     }
-
 }

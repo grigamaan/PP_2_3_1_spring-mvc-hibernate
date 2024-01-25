@@ -13,7 +13,6 @@ import web.repository.UserRepository;
 
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private UserRepository repository;
@@ -41,6 +40,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional
     @Override
     public boolean saveUser(User user) {
         try {
@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     @Override
     public boolean deleteUserById(Long id) {
         try {
